@@ -1,0 +1,5 @@
+rl_none: "none"
+rl_msg_in_cooldown: "<color=yellow>На перезарядке</color>"
+rl_cast_wanderinghands: "Шустрые руки"
+rl_cast_wanderinghands_desc: "Самые шустрые руки на диком западе"
+rl_cast_holyfire: "Святое пламя"

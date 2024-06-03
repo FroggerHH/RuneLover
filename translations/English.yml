@@ -1,0 +1,4 @@
+rl_none: "none"
+rl_msg_in_cooldown: "<color=yellow>In cooldown</color>"
+rl_cast_wanderinghands: "Wandering hands"
+rl_cast_wanderinghands_desc: "The fastest hands in the west"
