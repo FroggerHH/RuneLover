@@ -1,5 +1,6 @@
 ﻿using System.Reflection;
 using BepInEx;
+using RuneLover.Casts;
 using RuneLover.ItemManager;
 using RuneLover.LocalizationManager;
 

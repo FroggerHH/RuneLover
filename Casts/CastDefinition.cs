@@ -1,6 +1,6 @@
 ﻿using BepInEx.Configuration;
 
-namespace RuneLover;
+namespace RuneLover.Casts;
 
 public class CastDefinition
 {

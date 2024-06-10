@@ -1,4 +1,6 @@
-﻿namespace RuneLover.Patch;
+﻿using RuneLover.Casts;
+
+namespace RuneLover.Patch;
 
 [HarmonyPatch, HarmonyWrapSafe]
 [HarmonyPatch(typeof(Player), nameof(Player.ConsumeItem))]

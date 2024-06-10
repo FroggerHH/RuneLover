@@ -1,6 +1,6 @@
-﻿using static RuneLover.FutureCastStatus;
+﻿using static RuneLover.Casts.FutureCastStatus;
 
-namespace RuneLover;
+namespace RuneLover.Casts;
 
 public static class CastPaternManager
 {
