@@ -110,6 +110,7 @@
     <Target Name="CopyDLL" AfterTargets="ILRepack">
         <Copy SourceFiles="$(TargetDir)$(ProjectName).dll" DestinationFolder="../_Publish/Frogger-$(ProjectName)"/>
         <Copy SourceFiles="$(TargetDir)$(ProjectName).dll" DestinationFolder="$(BEPINEX_PATH)/plugins"/>
-        <Message Text="Copied $(ProjectName).dll to ../_Publish and $(BEPINEX_PATH)/plugins"/>
+        <Message Importance="high" Text="Copied $(ProjectName).dll to ../_Publish and $(BEPINEX_PATH)/plugins"/>
+        <Message Importance="high" Text="Copied $(ProjectName).dll to ../_Publish and $(BEPINEX_PATH)/plugins"/>
     </Target>
 </Project>
