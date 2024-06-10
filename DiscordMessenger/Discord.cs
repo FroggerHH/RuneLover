@@ -10,7 +10,7 @@ public static class Discord
 
     private static bool startMessageSent;
 
-    private static void SendStartMessage()
+    public static void SendStartMessage()
     {
         if (startMessageSent) return;
         startMessageSent = true;
