@@ -1,6 +1,4 @@
-﻿using System.Runtime.CompilerServices;
-
-namespace RuneLover.Patch;
+﻿namespace RuneLover.Patch;
 
 [HarmonyPatch, HarmonyWrapSafe]
 [HarmonyPatch(typeof(Player), nameof(Player.ConsumeItem))]

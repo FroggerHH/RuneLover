@@ -11,7 +11,7 @@ public class CastDefinition
     public List<RuneType> patern = [];
 
     public int CachedHashName => _cachedHashName ??= Name.GetStableHashCode();
-    private int? _cachedHashName = null;
+    private int? _cachedHashName;
     public ConfigEntry<float> MinDuration;
     public ConfigEntry<float> MaxDuration;
     public ConfigEntry<float> MinCooldown;

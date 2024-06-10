@@ -2,6 +2,7 @@
 
 public abstract class CastBase
 {
+    public static List<CastBase> AllInstances { get; private set; } = [];
     public CastDefinition Definition { get; } = new();
 
     public virtual CostType Cost => CostType.Stamina;
@@ -16,6 +17,10 @@ public abstract class CastBase
         Health = 4,
     }
 
+    protected CastBase()
+    {
+        AllInstances.Add(this);
+    }
 
     protected internal CastBase Clone() => (CastBase)MemberwiseClone();
 
@@ -43,7 +48,7 @@ public abstract class CastBase
     }
 
     private Coroutine _Internal_Cooldown_Coroutine;
-    private float _Internal_Cooldown = 0;
+    private float _Internal_Cooldown;
 
     public void StartCooldown(float time)
     {
@@ -90,5 +95,32 @@ public abstract class CastBase
         var maxValue = Definition.MaxValue.Value;
         var value = Lerp(minValue, maxValue, Random.value);
         return value;
+    }
+
+    protected virtual bool Add_SE(ObjectDB odb)
+    {
+        if (ObjectDB.instance == null || ObjectDB.instance.m_items.Count == 0 ||
+            ObjectDB.instance.GetItemPrefab("Amber") == null) return false;
+        return true;
+    }
+
+    [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.Awake))]
+    private static class ObjectDBAwake
+    {
+        [UsedImplicitly, HarmonyPostfix]
+        private static void Postfix(ObjectDB __instance)
+        {
+            foreach (var cast in AllInstances) cast.Add_SE(__instance);
+        }
+    }
+
+    [HarmonyPatch(typeof(ObjectDB), nameof(ObjectDB.CopyOtherDB))]
+    private static class ObjectDBCopyOtherDB
+    {
+        [UsedImplicitly, HarmonyPostfix]
+        private static void Postfix(ObjectDB __instance)
+        {
+            foreach (var cast in AllInstances) cast.Add_SE(__instance);
+        }
     }
 }

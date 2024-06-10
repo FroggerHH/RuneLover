@@ -7,6 +7,7 @@ using System.Text.RegularExpressions;
 using BepInEx;
 using BepInEx.Bootstrap;
 using BepInEx.Configuration;
+using Trader_1 = Trader;
 
 // ReSharper disable All
 
@@ -832,12 +833,12 @@ public class Item
                     statcfg("Trader Value", $"Trader value of {englishName}.", shared => shared.m_value,
                         (shared, value) => shared.m_value = value);
 
-                    if (itemType is ItemData.ItemType.Bow or ItemData.ItemType.Chest
-                        or ItemData.ItemType.Hands or ItemData.ItemType.Helmet
-                        or ItemData.ItemType.Legs or ItemData.ItemType.Shield
-                        or ItemData.ItemType.Shoulder or ItemData.ItemType.Tool
-                        or ItemData.ItemType.OneHandedWeapon or ItemData.ItemType.TwoHandedWeapon
-                        or ItemData.ItemType.TwoHandedWeaponLeft)
+                    if (itemType is ItemType.Bow or ItemType.Chest
+                        or ItemType.Hands or ItemType.Helmet
+                        or ItemType.Legs or ItemType.Shield
+                        or ItemType.Shoulder or ItemType.Tool
+                        or ItemType.OneHandedWeapon or ItemType.TwoHandedWeapon
+                        or ItemType.TwoHandedWeaponLeft)
                     {
                         statcfg("Durability", $"Durability of {englishName}.", shared => shared.m_maxDurability,
                             (shared, value) => shared.m_maxDurability = value);
@@ -848,9 +849,9 @@ public class Item
                             shared => shared.m_movementModifier, (shared, value) => shared.m_movementModifier = value);
                     }
 
-                    if (itemType is ItemData.ItemType.Bow or ItemData.ItemType.Shield
-                        or ItemData.ItemType.OneHandedWeapon or ItemData.ItemType.TwoHandedWeapon
-                        or ItemData.ItemType.TwoHandedWeaponLeft)
+                    if (itemType is ItemType.Bow or ItemType.Shield
+                        or ItemType.OneHandedWeapon or ItemType.TwoHandedWeapon
+                        or ItemType.TwoHandedWeaponLeft)
                     {
                         statcfg("Block Armor", $"Block armor of {englishName}.", shared => shared.m_blockPower,
                             (shared, value) => shared.m_blockPower = value);
@@ -865,9 +866,9 @@ public class Item
                         statcfg("Parry Bonus", $"Parry bonus of {englishName}.", shared => shared.m_timedBlockBonus,
                             (shared, value) => shared.m_timedBlockBonus = value);
                     }
-                    else if (itemType is ItemData.ItemType.Chest or ItemData.ItemType.Hands
-                             or ItemData.ItemType.Helmet or ItemData.ItemType.Legs
-                             or ItemData.ItemType.Shoulder)
+                    else if (itemType is ItemType.Chest or ItemType.Hands
+                             or ItemType.Helmet or ItemType.Legs
+                             or ItemType.Shoulder)
                     {
                         statcfg("Armor", $"Armor of {englishName}.", shared => shared.m_armor,
                             (shared, value) => shared.m_armor = value);
@@ -881,9 +882,9 @@ public class Item
                             (shared, value) => shared.m_toolTier = value);
                     }
 
-                    if (itemType is ItemData.ItemType.Shield or ItemData.ItemType.Chest
-                        or ItemData.ItemType.Hands or ItemData.ItemType.Helmet
-                        or ItemData.ItemType.Legs or ItemData.ItemType.Shoulder)
+                    if (itemType is ItemType.Shield or ItemType.Chest
+                        or ItemType.Hands or ItemType.Helmet
+                        or ItemType.Legs or ItemType.Shoulder)
                     {
                         var modifiers =
                             shared.m_damageModifiers.ToDictionary(d => d.m_type,
@@ -928,7 +929,7 @@ public class Item
                         }
                     }
 
-                    if (itemType is ItemData.ItemType.Consumable && shared.m_food > 0)
+                    if (itemType is ItemType.Consumable && shared.m_food > 0)
                     {
                         statcfg("Health", $"Health value of {englishName}.", shared => shared.m_food,
                             (shared, value) => shared.m_food = value);
@@ -958,9 +959,9 @@ public class Item
                             (shared, value) => shared.m_attack.m_attackEitr = value);
                     }
 
-                    if (itemType is ItemData.ItemType.OneHandedWeapon
-                        or ItemData.ItemType.TwoHandedWeapon or ItemData.ItemType.TwoHandedWeaponLeft
-                        or ItemData.ItemType.Bow)
+                    if (itemType is ItemType.OneHandedWeapon
+                        or ItemType.TwoHandedWeapon or ItemType.TwoHandedWeaponLeft
+                        or ItemType.Bow)
                     {
                         statcfg("Knockback", $"Knockback of {englishName}.", shared => shared.m_attackForce,
                             (shared, value) => shared.m_attackForce = value);
@@ -1002,7 +1003,7 @@ public class Item
                         SetDmg("Spirit", dmg => dmg.m_spirit,
                             (ref HitData.DamageTypes dmg, float val) => dmg.m_spirit = val);
 
-                        if (itemType is ItemData.ItemType.Bow)
+                        if (itemType is ItemType.Bow)
                         {
                             statcfg("Projectiles", $"Number of projectiles that {englishName} shoots at once.",
                                 shared => shared.m_attack.m_projectileBursts,
@@ -1212,7 +1213,7 @@ public class Item
 
         var itemName = prefab.GetComponent<ItemDrop>().m_itemData.m_shared.m_name;
 
-        var inventories = Player.s_players.Select(p => p.GetInventory())
+        var inventories = s_players.Select(p => p.GetInventory())
             .Concat(FindObjectsOfType<Container>().Select(c => c.GetInventory()))
             .Where(c => c is not null).ToArray();
         foreach (var itemdata in ObjectDB.instance.m_items.Select(p => p.GetComponent<ItemDrop>())
@@ -1245,7 +1246,7 @@ public class Item
             {
                 var cfg = cfgs?[kv.Key];
 
-                var recipe = ScriptableObject.CreateInstance<Recipe>();
+                var recipe = CreateInstance<Recipe>();
                 recipe.name = $"{Prefab.name}_Recipe_{station.Table.ToString()}";
                 recipe.m_amount = kv.Value.CraftAmount;
                 recipe.m_enabled = cfg is null
@@ -1363,8 +1364,8 @@ public class Item
         }
     }
 
-    internal static void Patch_TraderGetAvailableItems(global::Trader __instance,
-        ref List<global::Trader.TradeItem> __result)
+    internal static void Patch_TraderGetAvailableItems(Trader_1 __instance,
+        ref List<Trader_1.TradeItem> __result)
     {
         Trader trader = Utils.GetPrefabName(__instance.gameObject) switch
         {
@@ -1382,7 +1383,7 @@ public class Item
     {
         if (__result)
         {
-            Player.m_localPlayer.UnequipItem(item);
+            m_localPlayer.UnequipItem(item);
         }
     }
 
@@ -1395,7 +1396,7 @@ public class Item
             {
                 configs = Enumerable.Empty<ItemConfig>();
             }
-            else if (Player.m_localPlayer.GetCurrentCraftingStation() is { } currentCraftingStation)
+            else if (m_localPlayer.GetCurrentCraftingStation() is { } currentCraftingStation)
             {
                 var stationName = Utils.GetPrefabName(currentCraftingStation.gameObject);
                 configs = itemConfigs.Where(c => c.Value.table.Value switch
@@ -1410,7 +1411,7 @@ public class Item
                 configs = itemConfigs.Values;
             }
 
-            __result = Mathf.Min(Mathf.Max(1, __instance.m_minStationLevel) + (quality - 1),
+            __result = Min(Max(1, __instance.m_minStationLevel) + (quality - 1),
                 configs.Where(cfg => cfg.maximumTableLevel is not null).Select(cfg => cfg.maximumTableLevel!.Value)
                     .DefaultIfEmpty(item.MaximumRequiredStationLevel).Max());
         }
@@ -1594,7 +1595,7 @@ public class Item
             drops = new SerializedDrop(config.Value);
         }
 
-        foreach (var kv in drops.toCharacterDrops(ZNetScene.s_instance, Prefab))
+        foreach (var kv in drops.toCharacterDrops(s_instance, Prefab))
         {
             if (kv.Key.GetComponent<CharacterDrop>() is not { } characterDrop)
             {
@@ -1674,7 +1675,7 @@ public class Item
             camera.targetTexture = RenderTexture.GetTemporary((int)rect.width, (int)rect.height);
             var maxDim = Mathf.Max(size.x, size.z);
             var minDim = Mathf.Min(size.x, size.z);
-            var yDist = (maxDim + minDim) / Mathf.Sqrt(2) / Mathf.Tan(camera.fieldOfView * Mathf.Deg2Rad);
+            var yDist = (maxDim + minDim) / Sqrt(2) / Tan(camera.fieldOfView * Deg2Rad);
             var cameraTransform = camera.transform;
             cameraTransform.position = ((min + max) / 2) with { y = max.y } + new Vector3(0, yDist, 0);
             topLight.transform.position = cameraTransform.position + new Vector3(-2, 0, 0.2f) / 3 * -yDist;
@@ -1906,7 +1907,7 @@ public class Item
             if (float.TryParse(
                     GUILayout.TextField((chance * 100).ToString(CultureInfo.InvariantCulture),
                         new GUIStyle(GUI.skin.textField) { fixedWidth = 45 }), NumberStyles.Float,
-                    CultureInfo.InvariantCulture, out var newChance) && !Mathf.Approximately(newChance / 100, chance)
+                    CultureInfo.InvariantCulture, out var newChance) && !Approximately(newChance / 100, chance)
                                                                      && !locked)
             {
                 chance = newChance / 100;
@@ -2362,7 +2363,7 @@ public static class PrefabManager
             postfix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(Item), nameof(Item.Patch_OnAddSmelterInput))));
         harmony.Patch(AccessTools.DeclaredMethod(typeof(Smelter), nameof(Smelter.OnAddOre)),
             postfix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(Item), nameof(Item.Patch_OnAddSmelterInput))));
-        harmony.Patch(AccessTools.DeclaredMethod(typeof(global::Trader), nameof(global::Trader.GetAvailableItems)),
+        harmony.Patch(AccessTools.DeclaredMethod(typeof(Trader_1), nameof(Trader_1.GetAvailableItems)),
             postfix: new HarmonyMethod(AccessTools.DeclaredMethod(typeof(Item),
                 nameof(Item.Patch_TraderGetAvailableItems))));
         harmony.Patch(AccessTools.DeclaredMethod(typeof(Localization), nameof(Localization.SetupLanguage)),
@@ -2420,12 +2421,12 @@ public static class PrefabManager
         return prefab;
     }
 
-    internal static readonly Dictionary<GameObject, Tuple<Trader, global::Trader.TradeItem>> CustomTradeItems = new();
+    internal static readonly Dictionary<GameObject, Tuple<Trader, Trader_1.TradeItem>> CustomTradeItems = new();
 
     public static void AddItemToTrader(GameObject prefab, Trader trader, uint price, uint stack = 1,
         string? requiredGlobalKey = null)
     {
-        CustomTradeItems[prefab] = new Tuple<Trader, global::Trader.TradeItem>(trader, new global::Trader.TradeItem
+        CustomTradeItems[prefab] = new Tuple<Trader, Trader_1.TradeItem>(trader, new Trader_1.TradeItem
         {
             m_prefab = prefab.GetComponent<ItemDrop>(),
             m_price = (int)price,
