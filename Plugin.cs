@@ -12,7 +12,7 @@ public class Plugin : BaseUnityPlugin
         ModName = "RuneLover",
         ModVersion = "0.1.0",
         ModAuthor = "Frogger",
-        ModGuid = $"com.{ModAuthor}.{ModName}";
+        ModGuid = $"com.{ModAuthor}.{ModName}"; 
 
     public static Item runeA = null!;
     public static Item runeB = null!;
