@@ -15,23 +15,16 @@ public static class LookForCast
         var runeType = CastPaternManager.GetRuneTypeFromItem(item);
         if (runeType is null) return true;
         __result = false;
-        Logic(runeType.Value);
-        return false;
-    }
-
-    private static void Logic(RuneType runeType)
-    {
-        var cast = CastPaternManager.OnNewAttack(runeType);
-        if (!cast) return;
-
-        Debug($"Cast {cast.Definition.Name} is ready");
+        
         try
         {
-            cast.Execute(showfailReson: true);
+            CastPaternManager.OnNewAttack(runeType.Value);
         }
         catch (Exception e)
         {
             DebugError(e);
         }
+
+        return false;
     }
 }

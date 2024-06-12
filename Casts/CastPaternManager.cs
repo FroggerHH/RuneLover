@@ -1,84 +1,154 @@
-﻿using static RuneLover.Casts.FutureCastStatus;
-
-namespace RuneLover.Casts;
+﻿namespace RuneLover.Casts;
 
 public static class CastPaternManager
 {
-    private static readonly List<CastBase> All = [];
+    private static readonly List<RuneType> CurrentChain = [];
+    private static CastDefinition castInProgress;
 
-    public static void RegisterCast(CastBase cast)
+    internal static Attack _DEBUG_m_Attack;
+    internal static Attack BaseAttack;
+    public static ItemData TempWeapon;
+    public static Transform CastPrefabHolder;
+
+    public static bool InCastExecution { get; set; } = false;
+
+    public static void Init()
     {
-        if (!All.Exists(x => x.Definition.patern == cast.Definition.patern)) All.Add(cast);
-        else DebugError("Cast with the same attackPath already exists");
+        InitBaseAttack();
+        InitTempWeapon();
+        CastPrefabHolder = new GameObject("CastPrefabHolder").transform;
+        CastPrefabHolder.gameObject.SetActive(false);
+        DontDestroyOnLoad(CastPrefabHolder);
     }
 
-    // private static RuneType? prevAttackPart;
-    // public static RuneType? PreviousAttackPart => prevAttackPart;
-    private static readonly List<RuneType> CurrentChain = [];
-
-    public static CastBase OnNewAttack(ItemData item)
+    private static void InitTempWeapon()
     {
-        if (item == null) return null;
-        if (!item.m_dropPrefab)
+        TempWeapon = new()
         {
-            DebugWarning($"Drop prefab not found for item: {item.LocalizeName()}");
-            return null;
-        }
+            m_shared = new()
+            {
+                m_name = "rl_TempWeapon",
+                m_useDurability = false,
+                m_useDurabilityDrain = 0f,
+                m_attack = BaseAttack
+            }
+        };
+        TempWeapon.m_shared.m_attack = BaseAttack;
+        TempWeapon.m_shared.m_secondaryAttack = new Attack();
+    }
 
-        var rune = GetRuneTypeFromItem(item);
-        if (!rune.HasValue) return null;
-
-        return OnNewAttack(rune);
+    private static void InitBaseAttack()
+    {
+        BaseAttack = new Attack()
+        {
+            m_attackAnimation = "staff_summon",
+            m_hitTerrain = true,
+            m_speedFactor = 0.5f,
+            m_speedFactorRotation = 0.3f,
+            m_attackStamina = 0,
+            m_attackRange = 2,
+            m_attackHeight = 1.2f,
+            m_projectileVel = 0,
+            m_projectileVelMin = 0,
+            m_launchAngle = -4,
+            m_requiresReload = false
+        };
     }
 
     public static RuneType? GetRuneTypeFromItem(ItemData item) =>
         item.m_dropPrefab.GetPrefabName() switch
         {
-            "Rune_A" => RuneType.A,
-            "Rune_B" => RuneType.B,
-            "Rune_C" => RuneType.C,
-            "Rune_D" => RuneType.D,
-            "Rune_E" => RuneType.E,
-            "Rune_F" => RuneType.F,
+            "rl_Rune_Fire" => RuneType.Fire,
+            "rl_Rune_Earth" => RuneType.Earth,
             _ => null
         };
 
-    public static CastBase OnNewAttack(RuneType? newAttack)
+    public static void OnNewAttack(RuneType newAttack)
     {
-        if (!newAttack.HasValue) return null;
-        // prevAttackPart = currentChain.Count > 0 ? currentChain.Last() : null;
-        CurrentChain.Add(newAttack.Value);
+        var chainCount = CurrentChain.Count;
+        if (chainCount == 0) CreateCastDef();
+        chainCount++;
+        CurrentChain.Add(newAttack);
 
-        var ready = All.FindAll(x => GetCastStatus(x) == Ready);
-        if (ready.Count > 0)
+        if (chainCount == 1) SetUpEffectTree(newAttack);
+        else if (chainCount == 2) SetUpAttackType(newAttack);
+        else if (chainCount == 3) SetUpMainEffect(newAttack);
+
+        //TODO: Detect cast end 
+        //TODO: Check if cast is valid
+        else if (chainCount == 4)
+        {
+            ConstructAndExecuteCast();
+        }
+        else
         {
             CurrentChain.Clear();
-            //TODO: add finish detection instead of executing the first available cast
-            var castInfo = ready.First();
-            // m_localPlayer.Message(MessageHud.MessageType.Center, castInfo.Definition.Name);
-            return castInfo;
+            throw new Exception("Chain too long");
         }
-
-        var possible = All.FindAll(x => GetCastStatus(x) == Posible);
-        if (possible.Count == 0)
-        {
-            CurrentChain.Clear();
-            CurrentChain.Add(newAttack.Value);
-            return null;
-        }
-
-        Debug($"Possible Casts: {possible.Select(x => x.Definition.Name).GetString()}");
-
-        return null;
     }
 
-    private static FutureCastStatus GetCastStatus(CastBase targetCast)
+    private static void CreateCastDef()
     {
-        if (CurrentChain.Count == 0) return Posible;
-        var remaning = targetCast.Definition.patern.GetRemaining(CurrentChain);
-        if (remaning == null) return Unavailable;
-        if (remaning.Count > 0) return Posible;
-        if (remaning.Count == 0) return Ready;
-        return Unavailable;
+        castInProgress = new CastDefinition();
     }
+
+    private static void SetUpEffectTree(RuneType rune)
+    {
+        //TODO: Turn to buff if casted with air
+        castInProgress.EffectTree = rune;
+    }
+
+    private static void SetUpAttackType(RuneType rune)
+    {
+        castInProgress.AttackType = rune;
+    }
+
+    private static void SetUpMainEffect(RuneType rune)
+    {
+        castInProgress.MainEffect = rune;
+    }
+
+    private static void ConstructAndExecuteCast()
+    {
+        var cast = Cast.Construct(castInProgress);
+        CurrentChain.Clear();
+        castInProgress = null;
+
+        var pl = m_localPlayer;
+        // cast.Execute(pl.position(), pl.GetLookDir());
+        cast.Execute();
+    }
+}
+
+public enum RuneType
+{
+    Fire,
+    Water,
+    Earth
+
+    //TODO: Add Air for buff spells
+}
+
+public enum EffectTree
+{
+    Attack,
+    Defense,
+    Buff
+
+    //TODO: Add EffectTree for more Runes
+}
+
+public enum AttackType
+{
+    Projectile,
+    AoE,
+    Dome
+}
+
+public enum CastEffect
+{
+    //TODO: Cast effects are available so far only with fire rune
+    Flame,
+    Burn,
+    WaterDrop,
 }

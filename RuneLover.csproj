@@ -107,10 +107,24 @@
         <Folder Include="Properties/"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <None Remove="runelover"/>
+        <EmbeddedResource Include="runelover">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="translations\English.yml"/>
+        <EmbeddedResource Include="translations\English.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+        <None Remove="translations\Russian.yml"/>
+        <EmbeddedResource Include="translations\Russian.yml">
+            <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+        </EmbeddedResource>
+    </ItemGroup>
+
     <Target Name="CopyDLL" AfterTargets="ILRepack">
         <Copy SourceFiles="$(TargetDir)$(ProjectName).dll" DestinationFolder="../_Publish/Frogger-$(ProjectName)"/>
         <Copy SourceFiles="$(TargetDir)$(ProjectName).dll" DestinationFolder="$(BEPINEX_PATH)/plugins"/>
-        <Message Importance="high" Text="Copied $(ProjectName).dll to ../_Publish and $(BEPINEX_PATH)/plugins"/>
-        <Message Importance="high" Text="Copied $(ProjectName).dll to ../_Publish and $(BEPINEX_PATH)/plugins"/>
+        <Message Importance="high" Text="Copied $(ProjectName).dll to ../_Publish and $(BEPINEX_PATH)plugins"/>
     </Target>
 </Project>
