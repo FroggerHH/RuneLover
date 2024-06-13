@@ -29,15 +29,14 @@ public class CastPrefabMono : MonoBehaviour
         {
             if (mesh.name.EndsWith("_main"))
             {
-                mesh.material.SetColor("_EmissionColor", VisualSettings.MainColor);
-                Debug(
-                    $"Set color of {mesh.name} to MainColor={VisualSettings.MainColor} -> {mesh.material.GetColor("_EmissionColor")}");
-            } 
+                mesh.material.color = VisualSettings.MainColor;
+                Debug($"Set color of {mesh.name} to MainColor={VisualSettings.MainColor} -> {mesh.material.color}");
+            }
             else if (mesh.name.EndsWith("_secondary"))
             {
-                mesh.material.SetColor("_EmissionColor", VisualSettings.SecondaryColor);
+                mesh.material.color = VisualSettings.SecondaryColor;
                 Debug(
-                    $"Set color of {mesh.name} to SecondaryColor={VisualSettings.SecondaryColor} -> {mesh.material.GetColor("_EmissionColor")}");
+                    $"Set color of {mesh.name} to SecondaryColor={VisualSettings.SecondaryColor} -> {mesh.material.color}");
             }
         }
 

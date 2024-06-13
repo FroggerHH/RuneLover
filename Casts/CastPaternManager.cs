@@ -48,10 +48,15 @@ public static class CastPaternManager
             m_attackStamina = 0,
             m_attackRange = 2,
             m_attackHeight = 1.2f,
-            m_projectileVel = 0,
-            m_projectileVelMin = 0,
-            m_launchAngle = -4,
-            m_requiresReload = false
+            m_projectileVel = 20,
+            m_projectileVelMin = 2,
+            m_randomVelocity = false,
+            m_launchAngle = -5,
+            m_requiresReload = false,
+            m_attackAngle = 90,
+            m_attackOffset = 0.2f,
+            m_projectileAccuracy = 1,
+            m_projectileAccuracyMin = 1,
         };
     }
 

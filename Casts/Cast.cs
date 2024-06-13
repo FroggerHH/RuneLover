@@ -30,8 +30,6 @@ public class Cast
                 attackType = AttackType.Projectile;
                 prefab = ProjectilePrefab;
                 attack.m_attackType = Attack.AttackType.Projectile;
-                attack.m_projectileVel = 20;
-                attack.m_projectileVelMin = 20;
                 break;
             case RuneType.Earth:
                 attackType = AttackType.AoE;
