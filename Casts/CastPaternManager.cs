@@ -2,7 +2,7 @@
 
 public static class CastPaternManager
 {
-    private static readonly List<RuneType> CurrentChain = [];
+    public static readonly List<RuneType> CurrentChain = [];
     private static CastDefinition castInProgress;
 
     internal static Attack _DEBUG_m_Attack;
@@ -113,7 +113,7 @@ public static class CastPaternManager
         castInProgress.MainEffect = rune;
     }
 
-    private static void ConstructAndExecuteCast()
+    public static void ConstructAndExecuteCast()
     {
         var cast = Cast.Construct(castInProgress);
         CurrentChain.Clear();
