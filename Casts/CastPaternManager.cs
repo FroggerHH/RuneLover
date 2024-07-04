@@ -70,6 +70,11 @@ public static class CastPaternManager
 
     public static void OnNewAttack(RuneType newAttack)
     {
+        // 1 - EffectTree
+        // 2 - AttackType
+        // 3 - MainEffect
+        // 4-5 - Additional effects
+        
         var chainCount = CurrentChain.Count;
         if (chainCount == 0) CreateCastDef();
         chainCount++;
@@ -79,12 +84,14 @@ public static class CastPaternManager
         else if (chainCount == 2) SetUpAttackType(newAttack);
         else if (chainCount == 3) SetUpMainEffect(newAttack);
 
+        //TODO: Add additional effects
+        else if (chainCount <= 5)
+        {
+        }
+        
+        
         //TODO: Detect cast end 
         //TODO: Check if cast is valid
-        else if (chainCount == 4)
-        {
-            ConstructAndExecuteCast();
-        }
         else
         {
             CurrentChain.Clear();

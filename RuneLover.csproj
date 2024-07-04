@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
-        <VALHEIM_INSTALL>/home/vyt/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/common/Valheim/</VALHEIM_INSTALL>
-        <BEPINEX_PATH>/home/vyt/.var/app/com.valvesoftware.Steam/.local/share/Steam/steamapps/common/Valheim/BepInEx/</BEPINEX_PATH>
+        <VALHEIM_INSTALL>/home/jf/.local/share/Steam/steamapps/common/Valheim/</VALHEIM_INSTALL>
+        <BEPINEX_PATH>/home/jf/.local/share/Steam/steamapps/common/Valheim/BepInEx/</BEPINEX_PATH>
 
         <TargetFramework>net48</TargetFramework>
         <RootNamespace>RuneLover</RootNamespace>
